@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smriti Aggarwal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #07070f;
+  --surface: #0e0c1a;
+  --surface2: #13102080;
+  --purple: #a070ff;
+  --purple-dim: rgba(140,90,255,0.35);
+  --purple-glow: rgba(140,90,255,0.15);
+  --text: #e8e0ff;
+  --text-muted: rgba(180,150,255,0.55);
+  --border: rgba(140,90,255,0.2);
+  --border-bright: rgba(140,90,255,0.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(120,80,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,80,255,0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ambient glow top center */
+body::after {
+  content: '';
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(120,60,255,0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HAMBURGER NAV ─── */
+.hamburger {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: rgba(14,12,26,0.85);
+  border: 1px solid var(--border-bright);
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.hamburger:hover { border-color: var(--purple); box-shadow: 0 0 16px rgba(140,90,255,0.3); }
+.hamburger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--purple);
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 260px;
+  background: rgba(10,8,20,0.97);
+  border-right: 1px solid var(--border);
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  padding: 80px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  backdrop-filter: blur(20px);
+}
+.side-nav.open { transform: translateX(0); box-shadow: 4px 0 40px rgba(100,50,255,0.15); }
+
+.side-nav-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-family: 'Syne', sans-serif;
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(180,150,255,0.7);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border: 1px solid transparent;
+  font-family: 'DM Sans', sans-serif;
+}
+.side-link i { font-size: 15px; }
+.side-link:hover, .side-link.active {
+  background: rgba(140,90,255,0.12);
+  border-color: var(--border);
+  color: #d4b8ff;
+}
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  background: rgba(0,0,0,0.4);
+}
+.nav-overlay.open { display: block; }
+
+/* ─── HERO ─── */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 40px;
+}
+
+.greeting {
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: 'Syne', sans-serif;
+  margin-bottom: 10px;
+}
+
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 7vw, 60px);
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: center;
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+.hero-name .accent { color: var(--purple); }
+
+.role-line {
+  font-size: 15px;
+  color: rgba(180,150,255,0.65);
+  margin-bottom: 36px;
+  min-height: 24px;
+  letter-spacing: 0.3px;
+  font-family: 'DM Sans', sans-serif;
+}
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 15px;
+  background: var(--purple);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 0.75s steps(1) infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* Photo */
+.photo-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin-bottom: 36px;
+}
+.photo-ring-outer {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(140,90,255,0.2);
+  animation: spin 12s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.photo-ring-outer::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 30%;
+  width: 40%;
+  height: 2px;
+  background: var(--purple);
+  border-radius: 2px;
+}
+.photo-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #1a1030, #0d0820);
+  border: 2px solid rgba(140,90,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(120,60,255,0.25), inset 0 0 30px rgba(100,50,200,0.1);
+  animation: pulse-photo 3.5s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+@keyframes pulse-photo {
+  0%,100%{ box-shadow: 0 0 30px rgba(120,60,255,0.2), inset 0 0 20px rgba(100,50,200,0.1); }
+  50%{ box-shadow: 0 0 60px rgba(140,80,255,0.45), inset 0 0 30px rgba(120,60,220,0.15); }
+}
+.photo-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.photo-circle .placeholder-icon { font-size: 64px; color: rgba(140,90,255,0.25); }
+
+/* Pills */
+.pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 500px;
+  margin-bottom: 8px;
+}
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(18,12,36,0.9);
+  border: 1px solid rgba(140,90,255,0.3);
+  border-radius: 24px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(180,140,255,0.8);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.2px;
+}
+.pill i { font-size: 13px; }
+.pill:hover, .pill.active {
+  background: rgba(140,90,255,0.18);
+  border-color: rgba(180,130,255,0.65);
+  color: #ddc8ff;
+  box-shadow: 0 0 18px rgba(140,90,255,0.2);
+}
+.pill-hint {
+  font-size: 10.5px;
+  color: rgba(140,90,255,0.3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-family: 'Syne', sans-serif;
+}
+
+/* ─── SECTIONS ─── */
+.section {
+  display: none;
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  animation: fadeup 0.3s ease;
+}
+.section.active { display: block; }
+@keyframes fadeup {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sec-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-header i { font-size: 18px; color: var(--purple); }
+.sec-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+/* Stat row */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.stat {
+  background: rgba(140,90,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.stat-num { font-size: 22px; font-weight: 700; color: var(--purple); font-family: 'Syne', sans-serif; }
+.stat-label { font-size: 10px; color: var(--text-muted); margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+/* Cards */
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover { border-color: var(--border-bright); box-shadow: 0 0 20px rgba(140,90,255,0.1); }
+.card-title { font-size: 14px; font-weight: 600; color: #d0b0ff; margin-bottom: 2px; font-family: 'Syne', sans-serif; }
+.card-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.3px; }
+.card-text { font-size: 13px; color: rgba(200,175,255,0.65); line-height: 1.75; }
+.card-text ul { margin: 8px 0 0 16px; }
+.card-text li { margin-bottom: 5px; }
+
+/* Tags */
+.tag-group { margin-bottom: 16px; }
+.tag-group-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-family: 'Syne', sans-serif;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  background: rgba(140,90,255,0.09);
+  border: 1px solid rgba(140,90,255,0.22);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  color: rgba(190,155,255,0.8);
+}
+
+/* Awards list */
+.award-item {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(140,90,255,0.08);
+}
+.award-item:last-child { border-bottom: none; }
+.award-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(140,90,255,0.1);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.award-icon i { font-size: 16px; color: var(--purple); }
+.award-title { font-size: 13px; font-weight: 600; color: #d0b0ff; margin-bottom: 3px; }
+.award-desc { font-size: 12px; color: rgba(190,155,255,0.6); line-height: 1.6; }
+
+/* Contact */
+.cta-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--purple);
+  border: 1px solid rgba(140,90,255,0.35);
+  border-radius: 22px;
+  padding: 9px 18px;
+  text-decoration: none;
+  background: rgba(140,90,255,0.07);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.cta:hover { background: rgba(140,90,255,0.18); border-color: rgba(180,130,255,0.65); box-shadow: 0 0 14px rgba(140,90,255,0.2); }
+.cta i { font-size: 15px; }
+
+.pos-item { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+.pos-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); margin-top: 6px; flex-shrink: 0; box-shadow: 0 0 8px rgba(140,90,255,0.6); }
+</style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<div class="hamburger" id="ham" onclick="toggleNav()" aria-label="menu">
+  <span></span><span></span><span></span>
+</div>
+
+<!-- Side nav -->
+<div class="nav-overlay" id="overlay" onclick="closeNav()"></div>
+<nav class="side-nav" id="sidenav" aria-label="site navigation">
+  <div class="side-nav-label">Navigate</div>
+  <div class="side-link" onclick="goTo('experience')"><i class="ti ti-briefcase"></i> Experience</div>
+  <div class="side-link" onclick="goTo('skills')"><i class="ti ti-code"></i> Skills</div>
+  <div class="side-link" onclick="goTo('projects')"><i class="ti ti-rocket"></i> Projects</div>
+  <div class="side-link" onclick="goTo('research')"><i class="ti ti-book"></i> Research</div>
+  <div class="side-link" onclick="goTo('awards')"><i class="ti ti-trophy"></i> Awards</div>
+  <div class="side-link" onclick="goTo('positions')"><i class="ti ti-users"></i> Leadership</div>
+  <div class="side-link" onclick="goTo('contact')"><i class="ti ti-mail"></i> Contact</div>
+</nav>
+
+<!-- Hero -->
+<div class="hero" id="hero">
+  <p class="greeting">Hi, I'm</p>
+  <h1 class="hero-name">Smriti <span class="accent">Aggarwal</span></h1>
+  <p class="role-line"><span id="typed"></span><span class="cursor"></span></p>
+
+  <div class="photo-wrap">
+    <div class="photo-ring-outer"></div>
+    <div class="photo-circle">
+      <!-- Replace the line below with: <img src="your-photo.jpg" alt="Smriti Aggarwal"> -->
+      <img src="IMG_1668.jpeg" alt="Smriti Aggarwal">
+    </div>
+  </div>
+
+  <div class="pills-row">
+    <div class="pill" onclick="goTo('experience')"><i class="ti ti-briefcase"></i> Experience</div>
+    <div class="pill" onclick="goTo('skills')"><i class="ti ti-code"></i> Skills</div>
+    <div class="pill" onclick="goTo('projects')"><i class="ti ti-rocket"></i> Projects</div>
+    <div class="pill" onclick="goTo('research')"><i class="ti ti-book"></i> Research</div>
+    <div class="pill" onclick="goTo('awards')"><i class="ti ti-trophy"></i> Awards</div>
+    <div class="pill" onclick="goTo('positions')"><i class="ti ti-users"></i> Leadership</div>
+    <div class="pill" onclick="goTo('contact')"><i class="ti ti-mail"></i> Contact</div>
+  </div>
+  <p class="pill-hint">tap a section to explore</p>
+</div>
+
+<!-- ─── EXPERIENCE ─── -->
+<section class="section" id="section-experience">
+  <div class="sec-header"><i class="ti ti-briefcase"></i><h2 class="sec-title">Work Experience</h2></div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Internships</div></div>
+    <div class="stat"><div class="stat-num">20L+</div><div class="stat-label">Revenue impact</div></div>
+    <div class="stat"><div class="stat-num">50+</div><div class="stat-label">User trials</div></div>
+    <div class="stat"><div class="stat-num">240+</div><div class="stat-label">Service hours</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">AI Analyst Intern (Vera) — Magicpin</div>
+    <div class="card-sub">March 2026 – Present &nbsp;·&nbsp; <a href="https://drive.google.com/drive/folders/1J1ZF5JBXRtR8TKDvo-Dw-NUdEk-atEm1?usp=sharing" target="_blank" style="color:var(--purple);text-decoration:none;">View certificate</a></div>
+    <div class="card-text">
+      <ul>
+        <li>Worked directly with the Co-Founder on high-impact growth initiatives, leveraging advanced analytics and search optimization (Solr); built end-to-end data and analytics solutions using Python, SQL, BigQuery, APIs, and Kubernetes to support reporting and decision-making across Vera and Food & Beverages businesses.</li>
+        <li>Automated systems using Anthropic Claude, Agentic AI, and fine-tuned ML/NLP models to reduce manual workflows and improve internal operational processes. Acted as the primary liaison between technical and sales teams, ensuring smooth execution and alignment of business requirements.</li>
+        <li>Created analytics dashboards for multiple verticals using Looker Studio; provided insights on revenue tracking, ads lead generation, campaign performance, and user behavior — helping increase monthly business revenue by over ₹20 lakh.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Neuro Game Development Intern — DRID</div>
+    <div class="card-sub">May 2025 – July 2025 &nbsp;·&nbsp; <a href="https://drive.google.com/drive/folders/1Dy2H5oTIi9Le8n2q56prDrIQrddKPF8H?usp=sharing" target="_blank" style="color:var(--purple);text-decoration:none;">View certificate</a></div>
+    <div class="card-text">
+      <ul>
+        <li>Developed cognitive games using Python, OpenCV and AWS — including a Stroop Game and Memory Test designed for users with ADHD and memory impairments; incorporated AI-based analysis and conducted 50+ testing trials.</li>
+        <li>Integrated voice input, video cues, click-based responses, and QR code scanning; performed user time-response analysis and contributed to a Springer published conference paper on cognitive improvements.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Market Strategy Analyst Intern — CybraneX</div>
+    <div class="card-sub">May 2024 – Aug 2024 &nbsp;·&nbsp; <a href="https://drive.google.com/drive/folders/1vQjJ3xhe74tfm80iz0wBUpQd3D7ae4Ls" target="_blank" style="color:var(--purple);text-decoration:none;">View certificate</a></div>
+    <div class="card-text">
+      <ul>
+        <li>Prepared a detailed budget for the setup of a new Quantum Lab, estimating costs and allocating resources for required equipment and raw materials. Conducted pricing analysis for laboratory materials and developed dashboards to support comparison and planning.</li>
+        <li>Analyzed business trends and campaign performance using Power BI, translating data-driven insights into marketing strategies that supported revenue growth and customer engagement.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SKILLS ─── -->
+<section class="section" id="section-skills">
+  <div class="sec-header"><i class="ti ti-code"></i><h2 class="sec-title">Technical Skills</h2></div>
+  <div class="tag-group">
+    <div class="tag-group-label">Languages & Databases</div>
+    <div class="tags"><span class="tag">Python</span><span class="tag">C++</span><span class="tag">SQL</span><span class="tag">MySQL</span><span class="tag">BigQuery</span><span class="tag">DBMS</span></div>
+  </div>
+  <div class="tag-group">
+    <div class="tag-group-label">AI / ML</div>
+    <div class="tags"><span class="tag">Agentic AI</span><span class="tag">RAG</span><span class="tag">LLM Fine-Tuning</span><span class="tag">NLP</span><span class="tag">Transformers</span><span class="tag">Hugging Face</span><span class="tag">Deep Learning</span><span class="tag">LSTM</span><span class="tag">RNN</span><span class="tag">GANs</span><span class="tag">SVM</span><span class="tag">Decision Trees</span><span class="tag">K-Means</span><span class="tag">KNN</span><span class="tag">Naive Bayes</span><span class="tag">PCA</span><span class="tag">Regression</span><span class="tag">Prompt Engineering</span></div>
+  </div>
+  <div class="tag-group">
+    <div class="tag-group-label">DevOps & Infrastructure</div>
+    <div class="tags"><span class="tag">Git</span><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Django</span></div>
+  </div>
+  <div class="tag-group">
+    <div class="tag-group-label">Analytics & Design Tools</div>
+    <div class="tags"><span class="tag">Power BI</span><span class="tag">Looker Studio</span><span class="tag">Advanced Excel</span><span class="tag">Figma</span><span class="tag">Canva</span><span class="tag">PowerPoint</span></div>
+  </div>
+</section>
+
+<!-- ─── PROJECTS ─── -->
+<section class="section" id="section-projects">
+  <div class="sec-header"><i class="ti ti-rocket"></i><h2 class="sec-title">Projects</h2></div>
+  <div class="card">
+    <div class="card-title">PokéPredict — Machine Learning & Deep Learning Analysis</div>
+    <div class="card-sub">Nov 2025 &nbsp;·&nbsp; <a href="https://github.com/Smritigit1202/Pok-Predict-Machine-Learning-Deep-Learning-Analysis" target="_blank" style="color:var(--purple);text-decoration:none;"><i class="ti ti-brand-github" style="font-size:12px;"></i> GitHub</a></div>
+    <div class="card-text">
+      <ul>
+        <li>Developed a data-driven Pokémon analysis using Python to evaluate multiple machine learning models (supervised and unsupervised) with accuracy above 80%.</li>
+        <li>Implemented preprocessing, training, and performance evaluation on a structured dataset (800 Pokémon records, 12+ features) with modular scripts for reproducibility and insights.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">AI NLP Analyzer</div>
+    <div class="card-sub">June 2025 &nbsp;·&nbsp; <a href="https://github.com/Smritigit1202/AI-NLP-Analyzer" target="_blank" style="color:var(--purple);text-decoration:none;"><i class="ti ti-brand-github" style="font-size:12px;"></i> GitHub</a></div>
+    <div class="card-text">
+      <ul>
+        <li>Built an Analyzer using Hugging Face Transformers, achieving 92% accuracy in sentiment classification.</li>
+        <li>Integrated AI-driven text processing for real-world applications using NLP and prompt engineering.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─── RESEARCH ─── -->
+<section class="section" id="section-research">
+  <div class="sec-header"><i class="ti ti-book"></i><h2 class="sec-title">Research & Publications</h2></div>
+  <div class="card">
+    <div class="card-title">Self-Healing Neural Networks (SHNN)</div>
+    <div class="card-sub">Under Review — IEEE Journal &nbsp;·&nbsp; Dec 2025</div>
+    <div class="card-text">Built a fault-aware deep learning framework that detects inference-time degradation, isolates defective neural network blocks (93% accuracy), and supports localized weight updates for autonomous model recovery without full retraining.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">A Study on Meta-Reflection for Explainable AI Decisions</div>
+    <div class="card-sub">Under Review — IEEE Journal &nbsp;·&nbsp; Oct 2025</div>
+    <div class="card-text">Conducted a research study on a hybrid AI model (HFCM) integrating deep learning (ResNet-based), fuzzy reasoning, and meta-reflection to enable confidence-aware decision-making. Trained on CIFAR-10, achieving 83% accuracy — generating human-like explanations through fuzzy membership and meta-confidence outputs.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Cognitive Game Therapy for ADHD & Memory Impairment</div>
+    <div class="card-sub">Published — Springer Conference 2025</div>
+    <div class="card-text">Co-authored paper on AI-assisted neuro game outcomes measuring cognitive improvement across 50+ controlled trials with ADHD and memory-impaired users.</div>
+  </div>
+</section>
+
+<!-- ─── AWARDS ─── -->
+<section class="section" id="section-awards">
+  <div class="sec-header"><i class="ti ti-trophy"></i><h2 class="sec-title">Awards & Recognition</h2></div>
+  <div class="card">
+    <div class="award-item">
+      <div class="award-icon"><i class="ti ti-medal"></i></div>
+      <div>
+        <div class="award-title">Pitch Perfect Innovation Challenge 2023 — Winner</div>
+        <div class="award-desc">Redesigned and strategised a detail-oriented system design for increasing audience engagement and screen time at OTT Platforms by 40%. <a href="https://www.linkedin.com/posts/smriti-aggarwal-94210825a_entrepreneurship-innovation-rank1-activity-7219031587898679297-Zwoy/" target="_blank" style="color:var(--purple);text-decoration:none;">View →</a></div>
+      </div>
+    </div>
+    <div class="award-item">
+      <div class="award-icon"><i class="ti ti-award"></i></div>
+      <div>
+        <div class="award-title">Adobe GenSolve 2024 — Finalist, Top 5%</div>
+        <div class="award-desc">Solutions for complex curve analysis and shape recognition using Computer Graphics with 80% accuracy. <a href="https://www.linkedin.com/posts/smriti-aggarwal-94210825a_adobegenai-hackathon-innovation-activity-7233874912401104896-I2yk/" target="_blank" style="color:var(--purple);text-decoration:none;">View →</a></div>
+      </div>
+    </div>
+    <div class="award-item">
+      <div class="award-icon"><i class="ti ti-star"></i></div>
+      <div>
+        <div class="award-title">ZS Campus Beats Tech Challenge 2025</div>
+        <div class="award-desc">Top 125 winning teams out of 1,00,000+ participants. Recognised for excellence in SQL, Puzzle Solving, Aptitude, Dynamic Programming, and Graphs. <a href="https://www.linkedin.com/posts/smriti-aggarwal-94210825a_zscampusbeats-techchallenge-teamwork-activity-7333867421797163008-Dq4v/" target="_blank" style="color:var(--purple);text-decoration:none;">View →</a></div>
+      </div>
+    </div>
+    <div class="award-item">
+      <div class="award-icon"><i class="ti ti-code"></i></div>
+      <div>
+        <div class="award-title">Advent of Code 2024</div>
+        <div class="award-desc">Achieved 50 stars, global rank under 1000 across competitive programming challenges. <a href="https://www.linkedin.com/posts/smriti-aggarwal-94210825a_aoc24-activity-7280162747059785728-zFQc/" target="_blank" style="color:var(--purple);text-decoration:none;">View →</a></div>
+      </div>
+    </div>
+    <div class="award-item">
+      <div class="award-icon"><i class="ti ti-terminal"></i></div>
+      <div>
+        <div class="award-title">500+ DSA Problems Solved</div>
+        <div class="award-desc">Across LeetCode, Codeforces, HackerRank, and CodeStudio.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── LEADERSHIP ─── -->
+<section class="section" id="section-positions">
+  <div class="sec-header"><i class="ti ti-users"></i><h2 class="sec-title">Leadership</h2></div>
+  <div class="card">
+    <div class="card-title">Chairperson — National Service Scheme (NSS), JIIT</div>
+    <div class="card-sub"><a href="https://www.linkedin.com/posts/nss-jiit_nss-nssjiit62-coreteam-activity-7190000945802469378-Engi/" target="_blank" style="color:var(--purple);text-decoration:none;">View post →</a></div>
+    <div class="card-text">Led 10+ large-scale community projects, impacting 500+ people. Completed 240+ service hours through impactful social initiatives.</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Director — Hult Prize Organisation, JIIT</div>
+    <div class="card-sub"><a href="https://www.linkedin.com/posts/hultprizeindia_meet-the-leaders-shaping-tomorrow-our-activity-7259104593358331904-6Tml/" target="_blank" style="color:var(--purple);text-decoration:none;">View post →</a></div>
+    <div class="card-text">Guided 50+ participants in exploring the intersection of business, technology, and social impact-driven solutions through entrepreneurial thinking.</div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section class="section" id="section-contact">
+  <div class="sec-header"><i class="ti ti-mail"></i><h2 class="sec-title">Get in Touch</h2></div>
+  <div class="card">
+    <div class="card-text" style="margin-bottom:20px;font-size:14px;line-height:1.8;">
+      Open to AI analyst, AI engineering, and growth-focused roles. Always happy to connect, collaborate, or chat about ideas.
+    </div>
+    <div class="cta-grid">
+      <a class="cta" href="mailto:smritiaggarwal1202@gmail.com"><i class="ti ti-mail"></i> smritiaggarwal1202@gmail.com</a>
+      <a class="cta" href="https://www.linkedin.com/in/smriti-aggarwal-94210825a/" target="_blank"><i class="ti ti-brand-linkedin"></i> LinkedIn</a>
+      <a class="cta" href="https://github.com/Smritigit1202" target="_blank"><i class="ti ti-brand-github"></i> GitHub</a>
+      <a class="cta" href="tel:+919205385989"><i class="ti ti-phone"></i> +91 92053 85989</a>
+    </div>
+  </div>
+</section>
+
+<script>
+// Typing animation
+const roles = ['AI Analyst', 'AI Engineer', 'Data & AI Specialist', 'Agentic AI Builder'];
+let ri = 0, ci = 0, deleting = false;
+const el = document.getElementById('typed');
+function type() {
+  const word = roles[ri];
+  if (!deleting) {
+    el.textContent = word.slice(0, ci + 1); ci++;
+    if (ci === word.length) { deleting = true; setTimeout(type, 1800); return; }
+  } else {
+    el.textContent = word.slice(0, ci - 1); ci--;
+    if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
+  }
+  setTimeout(type, deleting ? 50 : 85);
+}
+type();
+
+// Nav
+function toggleNav() {
+  document.getElementById('ham').classList.toggle('open');
+  document.getElementById('sidenav').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeNav() {
+  document.getElementById('ham').classList.remove('open');
+  document.getElementById('sidenav').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// Section navigation
+let current = null;
+function goTo(id) {
+  closeNav();
+  // Hide hero pills active state
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.side-link').forEach(l => l.classList.remove('active'));
+
+  // Find matching pill and side-link
+  document.querySelectorAll('.pill').forEach(p => { if (p.getAttribute('onclick').includes(id)) p.classList.add('active'); });
+  document.querySelectorAll('.side-link').forEach(l => { if (l.getAttribute('onclick').includes(id)) l.classList.add('active'); });
+
+  if (current === id) {
+    document.getElementById('section-' + id).classList.remove('active');
+    document.querySelectorAll('.pill, .side-link').forEach(el => el.classList.remove('active'));
+    current = null;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  if (current) document.getElementById('section-' + current).classList.remove('active');
+  current = id;
+  const sec = document.getElementById('section-' + id);
+  sec.classList.add('active');
+  setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+</script>
+</body>
+</html>
